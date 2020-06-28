@@ -12,6 +12,8 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.63"
+js-sys = "0.3.32"
+#js-sys : 메서드 및 속성을 포함하여javascript 기본 제공 기본 개체에 바인딩
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

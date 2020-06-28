@@ -1,6 +1,7 @@
 mod utils;
 
 use wasm_bindgen::prelude::*;
+use js_sys::Array;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -76,4 +77,10 @@ impl Game{
             score : 0,
         }
     }
+    
+    //javascript를 반환하는 public method
+    pub fn get_snake(&self) -> Array {
+        self.snake.clone().into_iter().map(JsValue::from).collect()
+    }
+    
 }
