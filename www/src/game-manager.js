@@ -1,6 +1,7 @@
 import { Game, Vector } from 'wasm-snake-game'
 import CONFIG from './config'
 import { View } from './view'
+import { Controller } from './controller'
 
 export class GameManager{
     constructor(){
@@ -9,6 +10,9 @@ export class GameManager{
             this.game.width,
             this.game.height,
             this.render.bind(this)
+        )
+        this.controller = new Controller(
+            this.onStop.bind(this)
         )
     }
 
@@ -26,6 +30,16 @@ export class GameManager{
         console.log(this.game)
     }
 
+    onStop(){
+        const now = Data.new()
+        if (this.stopTime) {
+            this.stopTime = undefined
+            this.lastUpdate = this.time + now - this.lastUpdate
+        }else{
+            this.stopTime = now
+        }
+    }
+
     render(){
         this.view.render(
             this.game.food,
@@ -37,12 +51,14 @@ export class GameManager{
     }
 
     tick(){
-        const lastUpdate = Date.now();
-        if(this.lastUpdate){
-            this.game.process(lastUpdate - this.lastUpdate)
+        if(!this.stopTime){
+            const lastUpdate = Date.now();
+            if(this.lastUpdate){
+                this.game.process(lastUpdate - this.lastUpdate, this.controller.movement)
+            }
+            this.lastUpdate = lastUpdate
+            this.render()
         }
-        this.lastUpdate = lastUpdate
-        this.render()
     }
 
     run(){
