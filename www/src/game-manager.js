@@ -2,6 +2,7 @@ import { Game, Vector } from 'wasm-snake-game'
 import CONFIG from './config'
 import { View } from './view'
 import { Controller } from './controller'
+import Storage from './storage'
 
 export class GameManager{
     constructor(){
@@ -27,7 +28,8 @@ export class GameManager{
                 CONFIG.SNAKE_DIRECTION_Y
             )
         )
-        console.log(this.game)
+        this.lastUpdate = undefined
+        this.stopTime = undefined
     }
 
     onStop(){
@@ -45,8 +47,7 @@ export class GameManager{
             this.game.food,
             this.game.get_snake(),
             this.game.score,
-            //TODO actual best score
-            0
+            Storage.getBestScore()
         )
     }
 
@@ -55,6 +56,13 @@ export class GameManager{
             const lastUpdate = Date.now();
             if(this.lastUpdate){
                 this.game.process(lastUpdate - this.lastUpdate, this.controller.movement)
+                if (this.game.is_over()){
+                    this.restart()
+                    return 
+                }
+                if (this.game.score > Storage.getBestScore()){
+                    Storage.setBestScore(this.game.score)
+                }
             }
             this.lastUpdate = lastUpdate
             this.render()
